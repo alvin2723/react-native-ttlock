@@ -13,6 +13,9 @@ import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 
+import java.util.Arrays;
+import java.util.List;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -227,13 +230,17 @@ public class TtlockModule extends ReactContextBaseJavaModule {
 //    }
 
     @ReactMethod
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, ReadableArray permissions, ReadableArray grantResults) {
+        List<String> permissionList = Arrays.asList(permissions.toArrayList().toArray(new String[0]));
+        List<Integer> grantResultsList = Arrays.asList(grantResults.toArrayList().toArray(new Integer[0]));
         switch (requestCode) {
             case PERMISSIONS_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0) {
-                    for (int i=0;i<permissions.length;i++) {
-                        if (Manifest.permission.ACCESS_FINE_LOCATION.equals(permissions[i]) && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                if (!grantResultsList.isEmpty()) {
+                    for (int i = 0; i < permissionList.size(); i++) {
+                        String permission = permissionList.get(i);
+                        int grantResult = grantResultsList.get(i).intValue();
+                        if (Manifest.permission.ACCESS_FINE_LOCATION.equals(permission) && grantResult == PackageManager.PERMISSION_GRANTED) {
                             // permission was granted, yay! Do the
                             // contacts-related task you need to do.
                           switch (scanType) {
