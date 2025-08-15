@@ -596,6 +596,33 @@ RCT_EXPORT_METHOD(configWifi:(NSString *) wifiName wifiPassword:(NSString *) wif
     }];
 }
 
+RCT_EXPORT_METHOD(getWifiPowerSavingTime:(NSString *) lockData success:(RCTResponseSenderBlock)success fail:(RCTResponseSenderBlock)fail)
+{
+    [TTLock getWifiPowerSavingTimeWithLockData:lockData success:^(NSString *timesJsonString) {
+      [Ttlock reseponseSuccess:timesJsonString success:success];
+    } failure:^(TTError errorCode, NSString *errorMsg) {
+      [Ttlock responseFail:LOCK code:errorCode errorMessage:errorMsg fail:fail];
+    }];
+}
+
+RCT_EXPORT_METHOD(configWifiPowerSavingTime:(NSArray *) weekDays startDate:(nonnull NSNumber *) startDate endDate:(nonnull NSNumber *) endDate lockData:(NSString *) lockData success:(RCTResponseSenderBlock)success fail:(RCTResponseSenderBlock)fail)
+{
+      [TTLock configWifiPowerSavingTimeWithWeekDays:weekDays startDate:startDate.intValue endDate:endDate.intValue lockData:lockData success:^{
+        [Ttlock reseponseSuccess:nil success:success];
+      } failure:^(TTError errorCode, NSString *errorMsg) {
+          [Ttlock responseFail:LOCK code:errorCode errorMessage:errorMsg fail:fail];
+      }];
+}
+
+RCT_EXPORT_METHOD(clearWifiPowerSavingTime:(NSString *) lockData success:(RCTResponseSenderBlock)success fail:(RCTResponseSenderBlock)fail)
+{
+    [TTLock clearWifiPowerSavingTimeWithLockData:lockData success:^{
+        [Ttlock reseponseSuccess:nil success:success];
+    } failure:^(TTError errorCode, NSString *errorMsg) {
+        [Ttlock responseFail:LOCK code:errorCode errorMessage:errorMsg fail:fail];
+    }];
+}
+
 
 RCT_EXPORT_METHOD(configServer:(NSString *) ip port:(NSString *) port lockData:(NSString *) lockData success:(RCTResponseSenderBlock)success fail:(RCTResponseSenderBlock)fail)
 {
@@ -677,6 +704,36 @@ RCT_EXPORT_METHOD(clearFace:(NSString *)lockData success:(RCTResponseSenderBlock
     } failure:^(TTError errorCode, NSString *errorMsg) {
         [Ttlock responseFail:LOCK code:errorCode errorMessage:errorMsg fail:fail];
     }];
+}
+
+
+RCT_EXPORT_METHOD(activateLiftFloors:(NSString *)floors lockData:(NSString *)lockData success:(RCTResponseSenderBlock)success fail:(RCTResponseSenderBlock)fail)
+{
+  [TTLock activateLiftFloors:floors lockData:lockData success:^(long long lockTime, NSInteger electricQuantity, long long uniqueId) {
+    [Ttlock reseponseSuccess:@[@(lockTime),@(electricQuantity), @(uniqueId)] success:success];
+  } failure:^(TTError errorCode, NSString *errorMsg) {
+    [Ttlock responseFail:LOCK code:errorCode errorMessage:errorMsg fail:fail];
+  }];
+}
+
+
+RCT_EXPORT_METHOD(setLiftControlEnableFloors:(NSString *)floors lockData:(NSString *)lockData success:(RCTResponseSenderBlock)success fail:(RCTResponseSenderBlock)fail)
+{
+  [TTLock setLiftControlableFloors:floors lockData:lockData success:^{
+    [Ttlock reseponseSuccess:nil success:success];
+  } failure:^(TTError errorCode, NSString *errorMsg) {
+    [Ttlock responseFail:LOCK code:errorCode errorMessage:errorMsg fail:fail];
+  }];
+}
+
+RCT_EXPORT_METHOD(setLiftWorkMode:(int) workMode lockData:(NSString *)lockData success:(RCTResponseSenderBlock)success fail:(RCTResponseSenderBlock)fail)
+{
+  TTLiftWorkMode liftWorkMode = workMode;
+  [TTLock setLiftWorkMode:liftWorkMode lockData:lockData success:^{
+    [Ttlock reseponseSuccess:nil success:success];
+  } failure:^(TTError errorCode, NSString *errorMsg) {
+    [Ttlock responseFail:LOCK code:errorCode errorMessage:errorMsg fail:fail];
+  }];
 }
 
 
@@ -905,7 +962,6 @@ RCT_EXPORT_METHOD(initWirelessKeypad:(NSString *)mac lockMac:(NSString *) lockMa
             [Ttlock responseFail:REMOTE_KEY_PAD code:status errorMessage:nil fail:fail];
         }
     }];
-    
 }
 
 
@@ -975,7 +1031,7 @@ RCT_EXPORT_METHOD(initWirelessKeypad:(NSString *)mac lockMac:(NSString *) lockMa
     
     ];
     
-    NSInteger errorCode = TTGatewayFail;
+    NSInteger errorCode = 0;
     for (int i = 0; i < codeArray.count; i++) {
         if([codeArray[i] intValue] == status){
             errorCode = i;

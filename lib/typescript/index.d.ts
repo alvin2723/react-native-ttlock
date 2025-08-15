@@ -84,7 +84,7 @@ declare class Ttlock {
      */
     static resetEkey(lockData: string, success: null | ((lockData: string) => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
     /**
-     * Controle the lock Unlock or lock or other operations
+     * Control the lock Unlock or lock or other operations
      * @param control  LockControlType
      * @param lockData string
      * @param success successful callback
@@ -332,10 +332,22 @@ declare class Ttlock {
        */
     static recoverCard(cardNumber: string, cycleList: null | CycleDateParam[], startDate: number, endDate: number, lockData: string, success: null | ((cardNumber: string) => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
     static recoverPasscode(passcode: string, passcodeType: number, cycleType: number, startDate: number, endDate: number, lockData: string, success: null | (() => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
-    static scanWifi(lockData: string, callback: ((isFinihed: boolean, wifiList: []) => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
+    static scanWifi(lockData: string, callback: ((isFinished: boolean, wifiList: []) => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
     static configWifi(wifiName: string, wifiPassword: string, lockData: string, success: null | (() => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
     static configServer(ip: string, port: string, lockData: string, success: null | (() => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
     static getWifiInfo(lockData: string, success: null | ((wifiMac: string, wifiRssi: number) => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
+    static getWifiPowerSavingTime(lockData: string, success: ((timesJsonString: undefined | string) => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
+    /**
+     * config wifi power saving time
+     * @param weekDays 1~7,1 means Monday，2 means  Tuesday ,...,7 means Sunday， such as @[@1,@3,@6,@7]
+     * @param startDate The time when it becomes valid (minutes from 0 clock)
+     * @param endDate The time when it is expired (minutes from 0 clock)
+     * @param lockData
+     * @param success
+     * @param fail
+     */
+    static configWifiPowerSavingTime(weekDays: number[], startDate: number, endDate: number, lockData: string, success: null | (() => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
+    static clearWifiPowerSavingTime(lockData: string, success: null | (() => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
     static configIp(info: WifiLockServerInfo, lockData: string, success: null | (() => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
     static addFace(cycleList: null | CycleDateParam[], startDate: number, endDate: number, lockData: string, progress: ((state: FaceState, FaceErrorCode: FaceErrorCode) => void), success: null | ((faceNumber: string) => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
     static addFaceFeatureData(faceFeatureData: string, cycleList: null | CycleDateParam[], startDate: number, endDate: number, lockData: string, success: null | ((faceNumber: string) => void), fail: null | ((errorCode: LockErrorCode, description: string) => void)): void;
@@ -351,12 +363,12 @@ declare class Ttlock {
      * @param callback
      */
     static getBluetoothState(callback: (state: BluetoothState) => void): void;
-    static supportFunction(fuction: LockFunction, lockData: string, callback: (isSupport: boolean) => void): void;
+    static supportFunction(lockFunction: LockFunction, lockData: string, callback: (isSupport: boolean) => void): void;
 }
 declare enum BluetoothState {
-    Unknow = 0,
+    Unknown = 0,
     Resetting = 1,
-    Unsupport = 2,
+    Unsupported = 2,
     Unauthorized = 3,
     On = 4,
     Off = 5
@@ -374,11 +386,11 @@ declare enum LockFunction {
     GatewayUnlock = 10,
     LockFreeze = 11,
     CyclePassword = 12,
-    RemoteUnlockSwicth = 14,
+    RemoteUnlockSwitch = 14,
     AudioSwitch = 15,
     NbIot = 16,
     GetAdminPasscode = 18,
-    HtelCard = 19,
+    HotelCard = 19,
     NoClock = 20,
     NoBroadcastInNormal = 21,
     PassageMode = 22,
@@ -401,7 +413,7 @@ declare enum LockFunction {
     SoundVolume = 43,
     QRCode = 44,
     SensorState = 45,
-    PassageModeAutoUn = 46,
+    PassageModeAutoUnlock = 46,
     DoorSensor = 50,
     DoorSensorAlert = 51,
     Sensitivity = 52,
@@ -432,14 +444,14 @@ declare enum LockConfigType {
 declare enum LockSoundVolume {
     On = -1,
     Off = 0,
-    Livel_1 = 1,
-    Livel_2 = 2,
-    Livel_3 = 3,
-    Livel_4 = 4,
-    Livel_5 = 5
+    Level_1 = 1,
+    Level_2 = 2,
+    Level_3 = 3,
+    Level_4 = 4,
+    Level_5 = 5
 }
 declare enum LockUnlockDirection {
-    Unknow = 0,
+    Unknown = 0,
     Left = 1,
     Right = 2
 }
@@ -454,7 +466,7 @@ declare enum LockControlType {
 declare enum LockState {
     Locked = 0,
     Unlock = 1,
-    Unknow = 2,
+    Unknown = 2,
     CarOnLock = 3
 }
 declare enum FaceState {
@@ -485,9 +497,9 @@ declare enum FaceErrorCode {
     needTiltHeadToRight = 20
 }
 declare enum LockErrorCode {
-    hadReseted = 0,
+    hadReset = 0,
     crcError = 1,
-    noPermisstion = 2,
+    noPermission = 2,
     wrongAdminCode = 3,
     lackOfStorageSpace = 4,
     inSettingMode = 5,
@@ -498,15 +510,15 @@ declare enum LockErrorCode {
     resetPasscode = 10,
     updatePasscodeIndex = 11,
     invalidLockFlagPos = 12,
-    ekeyExpired = 13,
+    eKeyExpired = 13,
     passcodeLengthInvalid = 14,
-    samePasscodes = 15,
-    ekeyInactive = 16,
+    samePasscode = 15,
+    eKeyInactive = 16,
     aesKey = 17,
     fail = 18,
     passcodeExist = 19,
     passcodeNotExist = 20,
-    lackOfStorageSpaceWhenAddingPasscodes = 21,
+    lackOfStorageSpaceWhenAddingPasscode = 21,
     invalidParaLength = 22,
     cardNotExist = 23,
     fingerprintDuplication = 24,
@@ -540,14 +552,14 @@ declare enum RemoteKeyPadErrorCode {
     fail = 0,
     wrongCRC = 1,
     connectTimeout = 2,
-    wrongFactorydDate = 3
+    wrongFactoryDate = 3
 }
 declare enum GatewayErrorCode {
     fail = 0,
     wrongSSID = 1,
     wrongWifiPassword = 2,
     wrongCRC = 3,
-    wrongAeskey = 4,
+    wrongAesKey = 4,
     notConnect = 5,
     disconnect = 6,
     failConfigRouter = 7,
@@ -556,7 +568,7 @@ declare enum GatewayErrorCode {
     noSIM = 10,
     invalidCommand = 11,
     failConfigIP = 12,
-    failInvaildIP = 13
+    failInvalidIP = 13
 }
 declare enum ConnectState {
     Timeout = 0,
@@ -587,4 +599,3 @@ declare enum GatewayIpSettingType {
     DHCP = 1
 }
 export { Ttlock, TtGateway, TtRemoteKey, TtDoorSensor, TtWirelessKeypad, BluetoothState, LockFunction, LockRecordType, LockConfigType, LockPassageMode, LockControlType, LockState, ConnectState, GatewayType, GatewayIpSettingType, LockSoundVolume, TtRemoteKeyEvent, TtDoorSensorEvent, LockUnlockDirection, LockAccessoryType, ScanLockModal, ScanRemoteKeyModal, ScanDoorSensorModal, DeviceSystemModal, WirelessKeypadEvent, ScanWirelessKeypadModal, WifiLockServerInfo, FaceState, FaceErrorCode, LockErrorCode, DoorSensorErrorCode, RemoteKeyErrorCode, RemoteKeyPadErrorCode, GatewayErrorCode, InitGatewayModal, InitGatewayParam };
-//# sourceMappingURL=index.d.ts.map
